@@ -3,8 +3,7 @@
 ***
 #### 
 
-I use the create-react-app to start the react project, and added drag component to this project.   
-(Now, it is not support mobile device.)
+I use the create-react-app to start this React project, and added the drag component into this project.   
 
 ***
 Live demo step:    
