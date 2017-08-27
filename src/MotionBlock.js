@@ -19,6 +19,23 @@ class MotionBlock extends Component {
     this.state = {};
   }
 
+  componentDidMount = () => {
+    // revert the touch event to mousedown event for mobile
+    let mouseEventTypes = {
+      touchstart: "mousedown",
+      touchmove: "mousemove",
+      touchend: "mouseup"
+    };
+    for (let originalType in mouseEventTypes) {
+      document.addEventListener(originalType, function (originalEvent) {
+        let event = document.createEvent("MouseEvents");
+        let touch = originalEvent.changedTouches[0];
+        event.initMouseEvent(mouseEventTypes[originalEvent.type], true, true, window, 0, touch.screenX, touch.screenY, touch.clientX, touch.clientY, touch.ctrlKey, touch.altKey, touch.shiftKey, touch.metaKey, 0, null);
+        originalEvent.target.dispatchEvent(event);
+      });
+    }
+  }
+
   getScrollOffsets = (w) => {
     w = w || window;
     if(w.pageXOffset != null) return {x: w.pageXOffset, y: w.pageYOffset};
@@ -84,16 +101,16 @@ class MotionBlock extends Component {
 
   render() {
     return (
-      <div>
+      <div className='container'>
         <div className='App-header App'>
           <span>Drag Playground, hello React ! :D</span>
         </div>
-        <div ref='thisMount' onMouseDown={this.onDrag} style={{width: 854, height: 565, position: 'absolute', zIndex: 200}}>
-          <div style={{height: 80, cursor: 'move', backgroundColor: '#d1f4ff', textAlign: 'center', lineHeight: '80px'}}>
+        <div ref='thisMount' onMouseDown={this.onDrag} style={{ position: 'absolute'}}>
+          <div style={{height: 50, cursor: 'move', backgroundColor: '#d1f4ff', textAlign: 'center', lineHeight: '50px'}}>
             <span>Drag here !</span>
           </div>
-          <div>
-            <iframe width="854" height="485"
+          <div ref='embed' className='embed-responsive embed-responsive-16by9'>
+            <iframe className='embed-responsive-item'
                     src="https://www.youtube.com/embed/5XRaMP4QPwU"
                     frameBorder="0" allowFullScreen>
             </iframe>
