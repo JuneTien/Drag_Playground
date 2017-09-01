@@ -1,4 +1,4 @@
-# Drag Playground
+# Drag Playground  [![Build Status](https://travis-ci.org/JuneTien/Drag_Playground.svg?branch=master)](https://travis-ci.org/JuneTien/Drag_Playground)
 #### Demo Site: https://junetien.github.io/Drag_Playground/
 ***
 #### 
