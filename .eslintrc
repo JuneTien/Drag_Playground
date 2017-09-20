@@ -1,0 +1,22 @@
+{
+  // use babel-eslint for parsing!
+  "parser": "babel-eslint",
+  "extends": "airbnb",
+  "env": {
+    "browser": true,
+    "jest": true,
+    "es6": true,
+    "node": true
+  },
+  // To give you an idea how to override rule options:
+  "rules": {
+    // Allow .js extensions for JSX. 
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    // If you want to write component in ES6 style, 
+    //   you still can do but in this case the eslint error need to be removed
+    "jsx-a11y/no-static-element-interactions": 0,
+    // Allows unary operators ++ and -- in the afterthought (final expression) of a for loop.
+    no-plusplus: ["error", { "allowForLoopAfterthoughts": true }],
+    "react/prefer-stateless-function": "off",
+  }
+}

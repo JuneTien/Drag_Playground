@@ -9,6 +9,7 @@ let origX = 0;
 let origY = 0;
 let deltaX = 0;
 let deltaY = 0;
+let thisMount = null;
 
 // let finalPosLeft = 0;
 // let finalPosTop = 0;
@@ -21,100 +22,110 @@ class MotionBlock extends Component {
 
   componentDidMount = () => {
     // revert the touch event to mousedown event for mobile
-    let mouseEventTypes = {
-      touchstart: "mousedown",
-      touchmove: "mousemove",
-      touchend: "mouseup"
+    const mouseEventTypes = {
+      touchstart: 'mousedown',
+      touchmove: 'mousemove',
+      touchend: 'mouseup',
     };
-    for (let originalType in mouseEventTypes) {
-      document.addEventListener(originalType, function (originalEvent) {
-        let event = document.createEvent("MouseEvents");
-        let touch = originalEvent.changedTouches[0];
-        event.initMouseEvent(mouseEventTypes[originalEvent.type], true, true, window, 0, touch.screenX, touch.screenY, touch.clientX, touch.clientY, touch.ctrlKey, touch.altKey, touch.shiftKey, touch.metaKey, 0, null);
+    // for (const originalType in mouseEventTypes) { 
+    for (let i = 0; i < mouseEventTypes.length; i++) {
+      // document.addEventListener(originalType, (originalEvent) => {
+      document.addEventListener(mouseEventTypes[i], (originalEvent) => {
+        const event = document.createEvent('MouseEvents');
+        const touch = originalEvent.changedTouches[0];
+        event.initMouseEvent(
+          mouseEventTypes[originalEvent.type],
+          true, true, window, 0,
+          touch.screenX, touch.screenY, touch.clientX, touch.clientY,
+          touch.ctrlKey, touch.altKey, touch.shiftKey, touch.metaKey,
+          0, null);
         originalEvent.target.dispatchEvent(event);
       });
     }
   }
 
-  getScrollOffsets = (w) => {
-    w = w || window;
-    if(w.pageXOffset != null) return {x: w.pageXOffset, y: w.pageYOffset};
-    var d = w.document;
-    if(document.compatMode === "CSS1Compat")
-      return {x: d.documentElement.scrollLeft, y: d.documentElement.scrollTop};
-
-    return {x: d.body.scrollLeft, y: d.body.scrollTop};
-  }
-
-  moveHandler = (e) => {
-    if(!e) e = window.event;
-    scroll = this.getScrollOffsets();
-    this.refs.thisMount.style.left = (e.clientX + scroll.x - deltaX)+"px";
-    this.refs.thisMount.style.top = (e.clientY + scroll.y - deltaY)+"px";
-  }
-
-  upHandler = (e) => {
-    if (!e) e = window.event;
-    if (document.removeEventListener) {
-      document.removeEventListener("mouseup", this.upHandler, true);
-      document.removeEventListener("mousemove", this.moveHandler, true);
-    } else if (document.detachEvnet) {
-      this.refs.thisMount.detachEvent("onlosecapture", this.upHandler);
-      this.refs.thisMount.detachEvent("onmouseup", this.upHandler);
-      this.refs.thisMount.detachEvent("onmousemove", this.moveHandler);
-    }
-
-    if(e.stopPropagation) e.stopPropagation();
-    else e.cancelBubble = true;
-  }
-
   onDrag = (e) => {
-    document.ontouchmove = function (e) {
-      e.preventDefault();
+    document.ontouchmove = (event) => {
+      event.preventDefault();
     };
 
     scroll = this.getScrollOffsets();
     startX = e.clientX + scroll.x;
     startY = e.clientY + scroll.y;
 
-    origX = this.refs.thisMount.offsetLeft;
-    origY = this.refs.thisMount.offsetTop;
+    origX = thisMount.offsetLeft;
+    origY = thisMount.offsetTop;
     deltaX = startX - origX;
     deltaY = startY - origY;
 
-    document.addEventListener("mousemove", this.moveHandler, true);
-    document.addEventListener("mouseup", this.upHandler, true);    
+    document.addEventListener('mousemove', this.moveHandler, true);
+    document.addEventListener('mouseup', this.upHandler, true);
 
     if (document.addEventListener) {
-      document.addEventListener("mousemove", this.moveHandler, true);
-      document.addEventListener("mouseup", this.upHandler, true);
+      document.addEventListener('mousemove', this.moveHandler, true);
+      document.addEventListener('mouseup', this.upHandler, true);
     } else if (document.attachEvent) {
-      this.refs.thisMount.setCapture();
-      this.refs.thisMount.attachEvent("onmousemove", this.moveHandler);
-      this.refs.thisMount.attachEvent("onmouseup", this.upHandler);
-      this.refs.thisMount.attachEvent("onlosecapture", this.upHandler);
+      thisMount.setCapture();
+      thisMount.attachEvent('onmousemove', this.moveHandler);
+      thisMount.attachEvent('onmouseup', this.upHandler);
+      thisMount.attachEvent('onlosecapture', this.upHandler);
     }
 
     if (e.preventDefault) e.preventDefault();
     else e.returnValue = false;
   }
 
+  getScrollOffsets = () => {
+    const w = window;
+    // w = w || window;
+    if (w.pageXOffset != null) return { x: w.pageXOffset, y: w.pageYOffset };
+    const d = w.document;
+    if (document.compatMode === 'CSS1Compat') { return { x: d.documentElement.scrollLeft, y: d.documentElement.scrollTop }; }
+
+    return { x: d.body.scrollLeft, y: d.body.scrollTop };
+  }
+
+  moveHandler = (e) => {
+    // if (!e) e = window.event;
+    scroll = this.getScrollOffsets();
+    thisMount.style.left = `${(e.clientX + scroll.x) - deltaX}px`;
+    thisMount.style.top = `${(e.clientY + scroll.y) - deltaY}px`;
+  }
+
+  upHandler = (e) => {
+    // if (!e) e = window.event;
+    if (document.removeEventListener) {
+      document.removeEventListener('mouseup', this.upHandler, true);
+      document.removeEventListener('mousemove', this.moveHandler, true);
+    } else if (document.detachEvnet) {
+      thisMount.detachEvent('onlosecapture', this.upHandler);
+      thisMount.detachEvent('onmouseup', this.upHandler);
+      thisMount.detachEvent('onmousemove', this.moveHandler);
+    }
+
+    if (e.stopPropagation) e.stopPropagation();
+    else e.cancelBubble = true;
+  }
+
   render() {
     return (
-      <div className='container'>
-        <div className='App-header App'>
+      <div className="container">
+        <div className="App-header App">
           <span>Drag Playground, hello React ! :D</span>
         </div>
-        <div ref='thisMount' onMouseDown={this.onDrag} style={{ position: 'absolute'}}>
-          <div style={{height: 50, cursor: 'move', backgroundColor: '#d1f4ff', textAlign: 'center', lineHeight: '50px'}}>
+        <div ref={(div) => { thisMount = div; }} onMouseDown={this.onDrag} style={{ position: 'absolute' }}>
+          <div style={{ height: 50, cursor: 'move', backgroundColor: '#d1f4ff', textAlign: 'center', lineHeight: '50px' }}>
             <span>Drag here !</span>
           </div>
-          <div ref='embed' className='embed-responsive embed-responsive-16by9'>
-            <iframe className='embed-responsive-item'
-                    src="https://www.youtube.com/embed/5XRaMP4QPwU"
-                    frameBorder="0" allowFullScreen>
-            </iframe>
-          </div>          
+          <div className="embed-responsive embed-responsive-16by9">
+            <iframe
+              title="embed"
+              className="embed-responsive-item"
+              src="https://www.youtube.com/embed/5XRaMP4QPwU"
+              frameBorder="0"
+              allowFullScreen
+            />
+          </div>
         </div>
       </div>
     );
