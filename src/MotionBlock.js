@@ -80,7 +80,9 @@ class MotionBlock extends Component {
     // w = w || window;
     if (w.pageXOffset != null) return { x: w.pageXOffset, y: w.pageYOffset };
     const d = w.document;
-    if (document.compatMode === 'CSS1Compat') { return { x: d.documentElement.scrollLeft, y: d.documentElement.scrollTop }; }
+    if (document.compatMode === 'CSS1Compat') {
+      return { x: d.documentElement.scrollLeft, y: d.documentElement.scrollTop };
+    }
 
     return { x: d.body.scrollLeft, y: d.body.scrollTop };
   }
@@ -114,7 +116,14 @@ class MotionBlock extends Component {
           <span>Drag Playground, hello React ! :D</span>
         </div>
         <div ref={(div) => { thisMount = div; }} onMouseDown={this.onDrag} style={{ position: 'absolute' }}>
-          <div style={{ height: 50, cursor: 'move', backgroundColor: '#d1f4ff', textAlign: 'center', lineHeight: '50px' }}>
+          <div style={{
+            height: 50,
+            cursor: 'move',
+            backgroundColor: '#d1f4ff',
+            textAlign: 'center',
+            lineHeight: '50px',
+          }}
+          >
             <span>Drag here !</span>
           </div>
           <div className="embed-responsive embed-responsive-16by9">
